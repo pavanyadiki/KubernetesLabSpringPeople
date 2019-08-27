@@ -31,4 +31,5 @@ metadata:
 spec:
   selector:
     app: kuard-config
+  ports:
     - port: 8080
