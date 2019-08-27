@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: example-ingress
+  namespace: ingress-nginx
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: "/"
+    #nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+spec:
+  rules:
+    - host: demo.com
+      http:
+        paths:
+          - path: /apple
+            backend:
+              serviceName: apple-service
+              servicePort: 5678
+          - path: /banana
+            backend:
+              serviceName: banana-service
+              servicePort: 5678
+          - path: /graph
+            backend:
+              serviceName: monitoring-grafana
+              servicePort: 80
+          - path: /kd
+            backend:
+              serviceName: kubernetes-dashboard
+              servicePort: 443
+          - path: /ghost
+            backend:
+              serviceName: ghost
+              servicePort: 2368
