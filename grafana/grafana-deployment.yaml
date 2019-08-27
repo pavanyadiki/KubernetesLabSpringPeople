@@ -1,54 +1,31 @@
-
-apiVersion: apps/v1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  labels:
-    app: grafana
-  name: grafana-deployment
+  name: grafana
+  namespace: monitoring
 spec:
   replicas: 1
-  selector:
-    matchLabels:
-      component: grafana
   template:
     metadata:
       labels:
-        component: grafana
+        k8s-app: grafana
     spec:
-      volumes:
-      - name: grafana-claim
-        persistentVolumeClaim:
-          claimName: grafana-claim
       containers:
       - name: grafana
-        image: pharosproduction/grafana:6
-        imagePullPolicy: IfNotPresent
+        image: grafana/grafana
         ports:
         - containerPort: 3000
-        resources:
-          limits:
-            cpu: 500m
-            memory: 2500Mi
-          requests:
-            cpu: 100m
-            memory: 100Mi
-        # livenessProbe:
-        #   exec:
-        #     command:
-        #       - wget 
-        #       - localhost:3000
-        #       - --spider
-        #   initialDelaySeconds: 30
-        #   periodSeconds: 30
-        # readinessProbe:
-        #   exec:
-        #     command:
-        #       - wget 
-        #       - localhost:3000
-        #       - --spider
-          # initialDelaySeconds: 120
-          # periodSeconds: 5
+          protocol: TCP
         volumeMounts:
         - mountPath: /var/lib/grafana
-          name: grafana-claim
- 
+          name: grafana-storage
+        env:
+        - name: GF_SERVER_HTTP_PORT
+          value: "3000"
+        - name: GF_SECURITY_ADMIN_PASSWORD
+          value: "helloworld"
+        - name: GF_INSTALL_PLUGINS
+          value: "grafana-kubernetes-app"
+      volumes:
+      - name: grafana-storage
+emptyDir: {}
